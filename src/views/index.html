@@ -1,10 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-{{define "hello"}}Hello, {{.}}!{{end}}
+{{define "index"}}
+    <h2>投稿内容</h2>
+    <form method="post" action="/insert">
+        <div>
+            <input type="text" name="title">
+        </div>
+        <div>
+            <textarea name="contents"></textarea>
+        </div>
+        <input type="submit" value="投稿">
+    </form>
+    {{range .}}
+    <p>{{.Title}}<b>{{.Content}}</b></p>
+    {{end}}
+{{end}}
 </body>
 </html>
