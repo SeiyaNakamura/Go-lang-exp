@@ -18,3 +18,4 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 func Hello(c echo.Context) error {
 	return c.Render(http.StatusOK, "hello", "World")
 }
+
