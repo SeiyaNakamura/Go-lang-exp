@@ -12,6 +12,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: golang
       MYSQL_DATABASE: golang_echo
+      TZ: Asia/Tokyo
   go:
     build:
       context: .
