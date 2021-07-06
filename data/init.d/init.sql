@@ -1,4 +1,4 @@
-CREATE DATABASE IF NOT EXISTS golang_echo;
+CREATE DATABASE IF NOT EXISTS golang_echo charset=utf8;
 USE golang_echo;
 
 CREATE TABLE IF NOT EXISTS articles (
