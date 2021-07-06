@@ -1,45 +1,47 @@
 package dao
 
 import (
+	"fmt"
 	"github.com/jinzhu/gorm"
 	"time"
 )
 
-func GormConnect() *gorm.DB {
-	DBMS     := "mysql"
-	USER     := "root"
-	PASS     := "golang"
-	PROTOCOL := "tcp(mysql:3306)"
-	DBNAME   := "golang_echo"
-
-	CONNECT := USER+":"+PASS+"@"+PROTOCOL+"/"+DBNAME
-	db,err := gorm.Open(DBMS, CONNECT)
-
-	if err != nil {
-		panic(err.Error())
-	}
-	return db
-}
-
-type article struct {
-	Id       int       `json:id`
-	Title      string    `json:title`
-	Content    string    `json:content`
+type Article struct {
+	Id        int       `json:id`
+	Title     string    `json:title`
+	Content   string    `json:content`
 	CreatedAt time.Time `json:created_at`
-	UpdatedAt  time.Time `json:updated_at`
+	UpdatedAt time.Time `json:updated_at`
 }
 
-func InsertArticle(db *gorm.DB, title string, content string) {
-	a := article{}
-	a.Id = 0
-	a.Title = title
-	a.Content = content
-	a.CreatedAt = time.Now()
-	db.Create(&a)
+type ArticleDB interface {
+	InsertArticle(db *gorm.DB, title string, content string)
+	GetArticles(db *gorm.DB) []Article
 }
 
-func GetArticles(db *gorm.DB) []article {
-	a := []article{}
-	db.Find(&a)
-	return a
+type ArticleDao struct {
+	articleDB ArticleDB
+}
+
+func NewArticleDB() ArticleDB {
+	return &ArticleDao{}
+}
+
+func (a *ArticleDao) InsertArticle(db *gorm.DB, title string, content string) {
+	art := Article{}
+	art.Id = 0
+	art.Title = title
+	art.Content = content
+	now := time.Now()
+	nowUTC := now.UTC()
+	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
+	art.CreatedAt = nowUTC.In(jst)
+	fmt.Println(art.CreatedAt)
+	db.Create(&art)
+}
+
+func (a *ArticleDao) GetArticles(db *gorm.DB) []Article {
+	articles := []Article{}
+	db.Find(&articles)
+	return articles
 }
