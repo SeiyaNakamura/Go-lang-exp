@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{{define "edit"}}
+    <h2>投稿内容</h2>
+    <form method="post" action="/update">
+        <div>
+            <input type="text" name="title">
+        </div>
+        <div>
+            <textarea name="contents"></textarea>
+        </div>
+        <input type="hidden" name="editId" value="{{.}}">
+        <input type="submit" value="変更">
+    </form>
+{{end}}
+</body>
+</html>

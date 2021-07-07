@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/KaoruOhbayashi/golang_echo/dao"
 	"github.com/KaoruOhbayashi/golang_echo/tao"
 	_ "github.com/go-sql-driver/mysql"
@@ -19,7 +18,7 @@ func ConnectMysql() *gorm.DB {
 	PROTOCOL := "tcp(mysql:3306)"
 	DBNAME   := "golang_echo"
 
-	CONNECT := USER+":"+PASS+"@"+PROTOCOL+"/"+DBNAME+"?parseTime=true"
+	CONNECT := USER+":"+PASS+"@"+PROTOCOL+"/"+DBNAME+"?parseTime=true&loc=Asia%2FTokyo"
 	db,err := gorm.Open(DBMS, CONNECT)
 
 	if err != nil {
@@ -50,9 +49,7 @@ func main() {
 
 	//Output articles
 	e.GET("index", func(c echo.Context) error{
-		fmt.Println("hello")
-		articles := articleDB.GetArticles(db)
-		fmt.Println(articles[0].UpdatedAt)
+		articles,_ := articleDB.GetArticles(db)
 		return  c.Render(http.StatusOK, "index", articles)
 	})
 
@@ -60,6 +57,20 @@ func main() {
 	e.POST("/insert", func(c echo.Context) error{
 		articleDB.InsertArticle(db,c.FormValue("title"),c.FormValue("contents"))
 		return c.Redirect(http.StatusFound, "/index") // Redirect to home
+	})
+
+	e.POST("/delete", func(c echo.Context) error {
+		articleDB.DeleteArticle(db,c.FormValue("deleteId"))
+		return c.Redirect(http.StatusFound, "/index")
+	})
+
+	e.POST("/edit", func(c echo.Context) error {
+		return c.Render(http.StatusOK,"edit",c.FormValue("editId"))
+	})
+
+	e.POST("/update", func(c echo.Context) error {
+		articleDB.EditArticle(db,c.FormValue("editId"),c.FormValue("title"),c.FormValue("contents"))
+		return c.Redirect(http.StatusFound, "/index")
 	})
 
 	e.Logger.Fatal(e.Start(":8080"))

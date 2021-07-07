@@ -3,6 +3,7 @@ package dao
 import (
 	"fmt"
 	"github.com/jinzhu/gorm"
+	"strconv"
 	"time"
 )
 
@@ -15,8 +16,10 @@ type Article struct {
 }
 
 type ArticleDB interface {
-	InsertArticle(db *gorm.DB, title string, content string)
-	GetArticles(db *gorm.DB) []Article
+	InsertArticle(db *gorm.DB, title string, content string) []error
+	GetArticles(db *gorm.DB) ([]Article,[]error)
+	DeleteArticle(db *gorm.DB, id string) []error
+	EditArticle(db *gorm.DB, id string, title string, content string) []error
 }
 
 type ArticleDao struct {
@@ -27,21 +30,39 @@ func NewArticleDB() ArticleDB {
 	return &ArticleDao{}
 }
 
-func (a *ArticleDao) InsertArticle(db *gorm.DB, title string, content string) {
+func (a *ArticleDao) InsertArticle(db *gorm.DB, title string, content string) []error {
 	art := Article{}
-	art.Id = 0
 	art.Title = title
 	art.Content = content
-	now := time.Now()
-	nowUTC := now.UTC()
-	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
-	art.CreatedAt = nowUTC.In(jst)
-	fmt.Println(art.CreatedAt)
-	db.Create(&art)
+	result := db.Create(&art)
+	return result.GetErrors()
 }
 
-func (a *ArticleDao) GetArticles(db *gorm.DB) []Article {
+func (a *ArticleDao) GetArticles(db *gorm.DB) ([]Article,[]error) {
 	articles := []Article{}
-	db.Find(&articles)
-	return articles
+	result := db.Find(&articles)
+	fmt.Println(result.GetErrors())
+	return articles,result.GetErrors()
+}
+
+func (a *ArticleDao) DeleteArticle(db *gorm.DB, id string) []error {
+	art := Article{}
+	deleteId,_ := strconv.Atoi(id)
+	result :=db.Delete(&art, deleteId)
+	return result.GetErrors()
+}
+
+func (a *ArticleDao) EditArticle(db *gorm.DB, id string, title string, contents string) []error {
+
+	//get article what is edited
+	art := Article{}
+	editId ,_:= strconv.Atoi(id)
+	db.Where("id = ?",editId).Select("created_at").Find(&art)
+
+	art.Id = editId
+	art.Title = title
+	art.Content = contents
+	art.UpdatedAt = time.Now()
+	result := db.Save(&art)
+	return result.GetErrors()
 }

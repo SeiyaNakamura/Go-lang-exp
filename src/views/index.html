@@ -17,8 +17,20 @@
         <input type="submit" value="投稿">
     </form>
     {{range .}}
-    <p>{{.Title}}<b>{{.Content}}</b></p>
-    <p>{{.UpdatedAt}}</p>
+        <p>{{.Title}}<b>{{.Content}}</b></p>
+        <p>{{.CreatedAt}}</p>
+        <form method="post" action="/delete">
+            <div>
+                <input type="hidden" name="deleteId" value="{{.Id}}">
+            </div>
+            <input type="submit" value="削除">
+        </form>
+        <form method="post" action="/edit">
+            <div>
+                <input type="hidden" name="editId" value="{{.Id}}">
+            </div>
+            <input type="submit" value="編集">
+        </form>
     {{end}}
 {{end}}
 </body>

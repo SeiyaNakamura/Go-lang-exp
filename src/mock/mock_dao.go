@@ -35,12 +35,41 @@ func (m *MockArticleDB) EXPECT() *MockArticleDBMockRecorder {
 	return m.recorder
 }
 
+// DeleteArticle mocks base method.
+func (m *MockArticleDB) DeleteArticle(db *gorm.DB, id string) []error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteArticle", db, id)
+	ret0, _ := ret[0].([]error)
+	return ret0
+}
+
+// DeleteArticle indicates an expected call of DeleteArticle.
+func (mr *MockArticleDBMockRecorder) DeleteArticle(db, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteArticle", reflect.TypeOf((*MockArticleDB)(nil).DeleteArticle), db, id)
+}
+
+// EditArticle mocks base method.
+func (m *MockArticleDB) EditArticle(db *gorm.DB, id, title, content string) []error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "EditArticle", db, id, title, content)
+	ret0, _ := ret[0].([]error)
+	return ret0
+}
+
+// EditArticle indicates an expected call of EditArticle.
+func (mr *MockArticleDBMockRecorder) EditArticle(db, id, title, content interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EditArticle", reflect.TypeOf((*MockArticleDB)(nil).EditArticle), db, id, title, content)
+}
+
 // GetArticles mocks base method.
-func (m *MockArticleDB) GetArticles(db *gorm.DB) []dao.Article {
+func (m *MockArticleDB) GetArticles(db *gorm.DB) ([]dao.Article, []error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetArticles", db)
 	ret0, _ := ret[0].([]dao.Article)
-	return ret0
+	ret1, _ := ret[1].([]error)
+	return ret0, ret1
 }
 
 // GetArticles indicates an expected call of GetArticles.
@@ -50,9 +79,11 @@ func (mr *MockArticleDBMockRecorder) GetArticles(db interface{}) *gomock.Call {
 }
 
 // InsertArticle mocks base method.
-func (m *MockArticleDB) InsertArticle(db *gorm.DB, title, content string) {
+func (m *MockArticleDB) InsertArticle(db *gorm.DB, title, content string) []error {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "InsertArticle", db, title, content)
+	ret := m.ctrl.Call(m, "InsertArticle", db, title, content)
+	ret0, _ := ret[0].([]error)
+	return ret0
 }
 
 // InsertArticle indicates an expected call of InsertArticle.
