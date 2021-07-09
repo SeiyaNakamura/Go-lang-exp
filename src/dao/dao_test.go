@@ -9,9 +9,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-func getVirtualDB() *gorm.DB {
-
-	a := Article{}
+func getVirtualDB(a Article) *gorm.DB {
 	db, _ := gorm.Open("sqlite3", "/tmp/gorm.db")
 	db = db.DropTable(a)
 	db = db.AutoMigrate(a)
@@ -33,7 +31,7 @@ func TestArticleDao_InsertArticle(t *testing.T) {
 		// TODO: Add test cases.
 		{
 			name: "Title_Error",
-			args: args{db: getVirtualDB(),title: "", content: "イチゴ"},
+			args: args{db: getVirtualDB(Article{}),title: "", content: "イチゴ"},
 			prepareMockFn: func(m *MockArticleDB) {},
 			want: []string {"error message for Title"},
 		},
@@ -74,7 +72,7 @@ func TestArticleDao_GetArticles(t *testing.T) {
 			prepareMockFn: func(m *MockArticleDB) {
 				//m.EXPECT().GetArticles(getVirtualDB(Article{})).Return([]Article{},[]error{})
 			},
-			args: args{db: getVirtualDB()},
+			args: args{db: getVirtualDB(Article{})},
 			want: []Article{},
 			want1: []error{},
 		},
@@ -119,7 +117,7 @@ func TestArticleDao_DeleteArticle(t *testing.T) {
 			prepareMockFn: func(m *MockArticleDB) {
 				//m.EXPECT().DeleteArticle(gomock.Any(),gomock.Any()).Return([]error{})
 			},
-			args: args{db: getVirtualDB(),id: "1"},
+			args: args{db: getVirtualDB(Article{}),id: "1"},
 			want: []error{},
 		},
 	}
@@ -161,7 +159,7 @@ func TestArticleDao_EditArticle(t *testing.T) {
 			prepareMockFn: func(m *MockArticleDB) {
 				//m.EXPECT().EditArticle(getVirtualDB(),"1","フルスピード", "最高").Return([]string{})
 			},
-			args: args{db: getVirtualDB(),id: "1",title: "", contents: "バナナ"},
+			args: args{db: getVirtualDB(Article{}),id: "1",title: "", contents: "バナナ"},
 			want: []string{"error message for Title"},
 		},
 	}

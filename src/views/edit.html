@@ -1,22 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+{{define "edit"}}
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.2/css/all.css"
+          integrity="sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns" crossorigin="anonymous">
+
     <title>Title</title>
 </head>
 <body>
-{{define "edit"}}
-    <h2>投稿内容</h2>
-    <form method="post" action="/update">
-        <div>
-            <input type="text" name="title">
+<nav class="navbar navbar-light bg-info">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="index">
+            <div class="row">
+                <div class="col-lg-4 d-flex align-items-center">
+                    <i class="fab fa-gofore d-inline-block align-top"></i>
+                </div>
+                <div class="col-lg-8 d-flex align-items-center h2 text-white">
+                    Echo
+                </div>
+            </div>
+        </a>
+    </div>
+</nav>
+
+<div class="container">
+    <div>
+        <div class="bg-white text-brack pt-5 pb-5 ">
+        <form method="POST" action="/update">
+            <div class="form-group mb-5">
+                <h2 style="color: #5FA8EB;">タイトル</h2>
+                <div class="border" style ="border-color: #5FA8EB!important;">
+                    <input type="text" name="title" class="form-control" id="title" placeholder="タイトルを入力してください">
+                </div>
+            </div>
+            <div class="mb-3">
+                <h2 style="color: #5FA8EB;">本文</h2>
+                <div class="border"  style ="border-color: #5FA8EB!important;">
+                    <textarea name="contents" class="form-control" id="contents" rows="20"></textarea>
+                </div>
+            </div>
+            <div class="text-right mt-3">
+                <input type="hidden" name="editId" value="{{.}}">
+                <button type="submit" class="btn-lg border border-success bg-success text-white" style="border-color: #5FA8EB!important; background-color: #5FA8EB!important;">変更</button>
+            </div>
+        </form>
         </div>
-        <div>
-            <textarea name="contents"></textarea>
-        </div>
-        <input type="hidden" name="editId" value="{{.}}">
-        <input type="submit" value="変更">
-    </form>
-{{end}}
+    </div>
+</div>
 </body>
 </html>
+{{end}}

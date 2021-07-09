@@ -8,6 +8,8 @@ import (
 	"github.com/labstack/echo"
 	"html/template"
 	"net/http"
+	"path/filepath"
+	"time"
 )
 
 //Connect mysql
@@ -39,6 +41,21 @@ func getIndexElement(a []dao.Article, e []string) interface{} {
 	return m
 }
 
+func getTemplate() *template.Template {
+	// 関数の定義とマッピング
+	funcMap := map[string]interface{}{
+		"layout": func(At time.Time) string {
+		layout := "2006年01月02日 15時04分"
+		AtStr := At.Format(layout)
+		return AtStr
+		},
+	}
+	files := []string{"views/index.html","views/edit.html"}
+	tname := filepath.Base(files[0])
+	t := template.Must(template.New(tname).Funcs(funcMap).ParseFiles(files...))
+	return t
+}
+
 func main() {
 
 	//Connect mysql
@@ -51,8 +68,9 @@ func main() {
 
 	//Road templates
 	t := &tao.Template{
-		Templates: template.Must(template.ParseGlob("views/*.html")),
+		Templates: getTemplate(),
 	}
+
 	e.Renderer = t
 
 	e.GET("/", func(c echo.Context) error {
