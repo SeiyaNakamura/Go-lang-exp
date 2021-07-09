@@ -6,6 +6,11 @@
 </head>
 <body>
 {{define "index"}}
+    {{range .Err}}
+        <li>
+            {{.}}
+        </li>
+    {{end}}
     <h2>投稿内容</h2>
     <form method="post" action="/insert">
         <div>
@@ -16,7 +21,7 @@
         </div>
         <input type="submit" value="投稿">
     </form>
-    {{range .}}
+    {{range .Art}}
         <p>{{.Title}}<b>{{.Content}}</b></p>
         <p>{{.CreatedAt}}</p>
         <form method="post" action="/delete">

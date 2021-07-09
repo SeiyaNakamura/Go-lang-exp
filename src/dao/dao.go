@@ -9,17 +9,17 @@ import (
 
 type Article struct {
 	Id        int       `json:id`
-	Title     string    `json:title`
-	Content   string    `json:content`
+	Title     string    `json:"title" validate:"is_titleLen,is_onlySpace"`
+	Content   string    `json:"content" validate:"is_contentLen,is_onlySpace"`
 	CreatedAt time.Time `json:created_at`
 	UpdatedAt time.Time `json:updated_at`
 }
 
 type ArticleDB interface {
-	InsertArticle(db *gorm.DB, title string, content string) []error
+	InsertArticle(db *gorm.DB, title string, content string) []string
 	GetArticles(db *gorm.DB) ([]Article,[]error)
 	DeleteArticle(db *gorm.DB, id string) []error
-	EditArticle(db *gorm.DB, id string, title string, content string) []error
+	EditArticle(db *gorm.DB, id string, title string, content string) []string
 }
 
 type ArticleDao struct {
@@ -30,12 +30,19 @@ func NewArticleDB() ArticleDB {
 	return &ArticleDao{}
 }
 
-func (a *ArticleDao) InsertArticle(db *gorm.DB, title string, content string) []error {
+func (a *ArticleDao) InsertArticle(db *gorm.DB, title string, content string) []string {
 	art := Article{}
 	art.Title = title
 	art.Content = content
-	result := db.Create(&art)
-	return result.GetErrors()
+
+	//validation
+	errors := ArticleValidation(&art)
+
+	if errors == nil {
+		db.Create(&art)
+	}
+
+	return errors
 }
 
 func (a *ArticleDao) GetArticles(db *gorm.DB) ([]Article,[]error) {
@@ -52,7 +59,7 @@ func (a *ArticleDao) DeleteArticle(db *gorm.DB, id string) []error {
 	return result.GetErrors()
 }
 
-func (a *ArticleDao) EditArticle(db *gorm.DB, id string, title string, contents string) []error {
+func (a *ArticleDao) EditArticle(db *gorm.DB, id string, title string, contents string) []string {
 
 	//get article what is edited
 	art := Article{}
@@ -63,6 +70,13 @@ func (a *ArticleDao) EditArticle(db *gorm.DB, id string, title string, contents 
 	art.Title = title
 	art.Content = contents
 	art.UpdatedAt = time.Now()
-	result := db.Save(&art)
-	return result.GetErrors()
+
+	//validation
+	errors := ArticleValidation(&art)
+
+	if errors == nil {
+		db.Save(&art)
+	}
+
+	return errors
 }
