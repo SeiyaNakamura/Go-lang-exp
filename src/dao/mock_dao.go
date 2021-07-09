@@ -2,12 +2,11 @@
 // Source: dao/dao.go
 
 // Package mock_dao is a generated GoMock package.
-package mock_dao
+package dao
 
 import (
 	reflect "reflect"
 
-	dao "github.com/KaoruOhbayashi/golang_echo/dao"
 	gomock "github.com/golang/mock/gomock"
 	gorm "github.com/jinzhu/gorm"
 )
@@ -64,10 +63,10 @@ func (mr *MockArticleDBMockRecorder) EditArticle(db, id, title, content interfac
 }
 
 // GetArticles mocks base method.
-func (m *MockArticleDB) GetArticles(db *gorm.DB) ([]dao.Article, []error) {
+func (m *MockArticleDB) GetArticles(db *gorm.DB) ([]Article, []error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetArticles", db)
-	ret0, _ := ret[0].([]dao.Article)
+	ret0, _ := ret[0].([]Article)
 	ret1, _ := ret[1].([]error)
 	return ret0, ret1
 }

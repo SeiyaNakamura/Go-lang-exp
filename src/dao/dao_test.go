@@ -1,13 +1,22 @@
 package dao
 
 import (
-	mock_dao "github.com/KaoruOhbayashi/golang_echo/mock"
 	"github.com/golang/mock/gomock"
 	"reflect"
 	"testing"
 
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
+
+func getVirtualDB() *gorm.DB {
+
+	a := Article{}
+	db, _ := gorm.Open("sqlite3", "/tmp/gorm.db")
+	db = db.DropTable(a)
+	db = db.AutoMigrate(a)
+	return db
+}
 
 func TestArticleDao_InsertArticle(t *testing.T) {
 	type args struct {
@@ -17,18 +26,16 @@ func TestArticleDao_InsertArticle(t *testing.T) {
 	}
 	tests := []struct {
 		name   string
-		prepareMockFn func(m *mock_dao.MockArticleDB)
 		args   args
-		want   []error
+		prepareMockFn func(m *MockArticleDB)
+		want   []string
 	}{
 		// TODO: Add test cases.
 		{
-			name: "success",
-			prepareMockFn: func(m *mock_dao.MockArticleDB) {
-				m.EXPECT().InsertArticle(gomock.Any(),"今日の朝食", "イチゴ").Return([]error{})
-			},
-			args: args{},
-			want: []error{},
+			name: "Title_Error",
+			args: args{db: getVirtualDB(),title: "", content: "イチゴ"},
+			prepareMockFn: func(m *MockArticleDB) {},
+			want: []string {"error message for Title"},
 		},
 	}
 	for _, tt := range tests {
@@ -36,7 +43,7 @@ func TestArticleDao_InsertArticle(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			mock := mock_dao.NewMockArticleDB(ctrl)
+			mock := NewMockArticleDB(ctrl)
 
 			tt.prepareMockFn(mock)
 
@@ -56,7 +63,7 @@ func TestArticleDao_GetArticles(t *testing.T) {
 	}
 	tests := []struct {
 		name   string
-		prepareMockFn func(m *mock_dao.MockArticleDB)
+		prepareMockFn func(m *MockArticleDB)
 		args   args
 		want   []Article
 		want1  []error
@@ -64,10 +71,10 @@ func TestArticleDao_GetArticles(t *testing.T) {
 		// TODO: Add test cases.
 		{
 			name: "success",
-			prepareMockFn: func(m *mock_dao.MockArticleDB) {
-				m.EXPECT().GetArticles(gomock.Any()).Return([]Article{},[]error{})
+			prepareMockFn: func(m *MockArticleDB) {
+				//m.EXPECT().GetArticles(getVirtualDB(Article{})).Return([]Article{},[]error{})
 			},
-			args: args{},
+			args: args{db: getVirtualDB()},
 			want: []Article{},
 			want1: []error{},
 		},
@@ -77,7 +84,7 @@ func TestArticleDao_GetArticles(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			mock := mock_dao.NewMockArticleDB(ctrl)
+			mock := NewMockArticleDB(ctrl)
 
 			tt.prepareMockFn(mock)
 
@@ -102,17 +109,17 @@ func TestArticleDao_DeleteArticle(t *testing.T) {
 	}
 	tests := []struct {
 		name   string
-		prepareMockFn func(m *mock_dao.MockArticleDB)
+		prepareMockFn func(m *MockArticleDB)
 		args   args
 		want   []error
 	}{
 		// TODO: Add test cases.
 		{
 			name: "success",
-			prepareMockFn: func(m *mock_dao.MockArticleDB) {
-				m.EXPECT().DeleteArticle(gomock.Any(),"1").Return([]error{})
+			prepareMockFn: func(m *MockArticleDB) {
+				//m.EXPECT().DeleteArticle(gomock.Any(),gomock.Any()).Return([]error{})
 			},
-			args: args{},
+			args: args{db: getVirtualDB(),id: "1"},
 			want: []error{},
 		},
 	}
@@ -121,7 +128,7 @@ func TestArticleDao_DeleteArticle(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			mock := mock_dao.NewMockArticleDB(ctrl)
+			mock := NewMockArticleDB(ctrl)
 
 			tt.prepareMockFn(mock)
 
@@ -144,18 +151,18 @@ func TestArticleDao_EditArticle(t *testing.T) {
 	}
 	tests := []struct {
 		name   string
-		prepareMockFn func(m *mock_dao.MockArticleDB)
+		prepareMockFn func(m *MockArticleDB)
 		args   args
-		want   []error
+		want   []string
 	}{
 		// TODO: Add test cases.
 		{
 			name: "success",
-			prepareMockFn: func(m *mock_dao.MockArticleDB) {
-				m.EXPECT().EditArticle(gomock.Any(),"1","フルスピード", "最高").Return([]error{})
+			prepareMockFn: func(m *MockArticleDB) {
+				//m.EXPECT().EditArticle(getVirtualDB(),"1","フルスピード", "最高").Return([]string{})
 			},
-			args: args{},
-			want: []error{},
+			args: args{db: getVirtualDB(),id: "1",title: "", contents: "バナナ"},
+			want: []string{"error message for Title"},
 		},
 	}
 	for _, tt := range tests {
@@ -163,7 +170,7 @@ func TestArticleDao_EditArticle(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			mock := mock_dao.NewMockArticleDB(ctrl)
+			mock := NewMockArticleDB(ctrl)
 
 			tt.prepareMockFn(mock)
 

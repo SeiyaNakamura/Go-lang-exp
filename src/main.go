@@ -27,6 +27,18 @@ func ConnectMysql() *gorm.DB {
 	return db
 }
 
+func getIndexElement(a []dao.Article, e []string) interface{} {
+	type Element struct {
+		Art []dao.Article
+		Err []string
+	}
+	m := Element{
+		Art: a,
+		Err: e,
+	}
+	return m
+}
+
 func main() {
 
 	//Connect mysql
@@ -50,13 +62,17 @@ func main() {
 	//Output articles
 	e.GET("index", func(c echo.Context) error{
 		articles,_ := articleDB.GetArticles(db)
-		return  c.Render(http.StatusOK, "index", articles)
+		err := []string{}
+		element := getIndexElement(articles,err)
+		return  c.Render(http.StatusOK, "index", element) // Redirect to home
 	})
 
 	//Post article
 	e.POST("/insert", func(c echo.Context) error{
-		articleDB.InsertArticle(db,c.FormValue("title"),c.FormValue("contents"))
-		return c.Redirect(http.StatusFound, "/index") // Redirect to home
+		err := articleDB.InsertArticle(db,c.FormValue("title"),c.FormValue("contents"))
+		articles,_ := articleDB.GetArticles(db)
+		element := getIndexElement(articles,err)
+		return  c.Render(http.StatusOK, "index", element) // Redirect to home
 	})
 
 	e.POST("/delete", func(c echo.Context) error {
@@ -69,8 +85,10 @@ func main() {
 	})
 
 	e.POST("/update", func(c echo.Context) error {
-		articleDB.EditArticle(db,c.FormValue("editId"),c.FormValue("title"),c.FormValue("contents"))
-		return c.Redirect(http.StatusFound, "/index")
+		err := articleDB.EditArticle(db,c.FormValue("editId"),c.FormValue("title"),c.FormValue("contents"))
+		articles,_ := articleDB.GetArticles(db)
+		element := getIndexElement(articles,err)
+		return  c.Render(http.StatusOK, "index", element) // Redirect to home
 	})
 
 	e.Logger.Fatal(e.Start(":8080"))
