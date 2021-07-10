@@ -44,11 +44,6 @@ func getIndexElement(a []dao.Article, e map[string]string) interface{} {
 		Art: a,
 		Err: e,
 	}
-	/*for i:=0;i<len(a);i++ {
-		safeText := template.HTMLEscapeString(m.Art[i].Content)
-		m.Art[i].Content = strings.Replace(safeText, "\n", "<br>", -1)
-	}
-	*/
 	return m
 }
 
