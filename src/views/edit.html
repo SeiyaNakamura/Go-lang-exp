@@ -34,18 +34,28 @@
         <form method="POST" action="/update">
             <div class="form-group mb-5">
                 <h2 style="color: #5FA8EB;">タイトル</h2>
+                <p class="text-danger">
+                    {{if .Err.titleError}}
+                        {{.Err.titleError}}
+                    {{end}}
+                </p>
                 <div class="border" style ="border-color: #5FA8EB!important;">
                     <input type="text" name="title" class="form-control" id="title" placeholder="タイトルを入力してください">
                 </div>
             </div>
             <div class="mb-3">
                 <h2 style="color: #5FA8EB;">本文</h2>
+                <p class="text-danger">
+                    {{if .Err.contentError}}
+                        {{.Err.contentError}}
+                    {{end}}
+                </p>
                 <div class="border"  style ="border-color: #5FA8EB!important;">
                     <textarea name="contents" class="form-control" id="contents" rows="20"></textarea>
                 </div>
             </div>
             <div class="text-right mt-3">
-                <input type="hidden" name="editId" value="{{.}}">
+                <input type="hidden" name="editId" value="{{.Id}}">
                 <button type="submit" class="btn-lg border border-success bg-success text-white" style="border-color: #5FA8EB!important; background-color: #5FA8EB!important;">変更</button>
             </div>
         </form>

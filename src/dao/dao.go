@@ -16,10 +16,10 @@ type Article struct {
 }
 
 type ArticleDB interface {
-	InsertArticle(db *gorm.DB, title string, content string) []string
+	InsertArticle(db *gorm.DB, title string, content string) map[string]string
 	GetArticles(db *gorm.DB) ([]Article,[]error)
 	DeleteArticle(db *gorm.DB, id string) []error
-	EditArticle(db *gorm.DB, id string, title string, content string) []string
+	EditArticle(db *gorm.DB, id string, title string, content string) map[string]string
 }
 
 type ArticleDao struct {
@@ -30,15 +30,16 @@ func NewArticleDB() ArticleDB {
 	return &ArticleDao{}
 }
 
-func (a *ArticleDao) InsertArticle(db *gorm.DB, title string, content string) []string {
+func (a *ArticleDao) InsertArticle(db *gorm.DB, title string, content string) map[string]string {
 	art := Article{}
 	art.Title = title
 	art.Content = content
 
 	//validation
 	errors := ArticleValidation(&art)
+	fmt.Println(errors)
 
-	if errors == nil {
+	if len(errors) == 0 {
 		db.Create(&art)
 	}
 
@@ -59,7 +60,7 @@ func (a *ArticleDao) DeleteArticle(db *gorm.DB, id string) []error {
 	return result.GetErrors()
 }
 
-func (a *ArticleDao) EditArticle(db *gorm.DB, id string, title string, contents string) []string {
+func (a *ArticleDao) EditArticle(db *gorm.DB, id string, title string, contents string) map[string]string{
 
 	//get article what is edited
 	art := Article{}
@@ -74,7 +75,7 @@ func (a *ArticleDao) EditArticle(db *gorm.DB, id string, title string, contents 
 	//validation
 	errors := ArticleValidation(&art)
 
-	if errors == nil {
+	if len(errors) == 0 {
 		db.Save(&art)
 	}
 

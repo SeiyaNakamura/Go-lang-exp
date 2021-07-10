@@ -7,7 +7,7 @@ import (
 
 func is_titleLen(fl validator.FieldLevel) bool {
 	title := fl.Field().String()
-	if len(title) > 0 || len(title) <= 255 {
+	if len(title) > 0 && len(title) <= 255 {
 		return true
 	}
 	return false
@@ -24,14 +24,14 @@ func is_onlySpace(fl validator.FieldLevel) bool {
 
 func is_contentLen(fl validator.FieldLevel) bool {
 	content := fl.Field().String()
-	if len(content) > 0 || len(content) <= 65535 {
+	if len(content) > 0 && len(content) <= 65535 {
 		return true
 	}
 	return false
 }
 
-func ArticleValidation(article *Article) []string {
-	var errorMessages []string
+func ArticleValidation(article *Article) map[string]string {
+	errorMessages := map[string]string{}
 
 	validate := validator.New()
 	validate.RegisterValidation("is_titleLen", is_titleLen)
@@ -42,18 +42,16 @@ func ArticleValidation(article *Article) []string {
 
 	if err != nil {
 		for _,err := range err.(validator.ValidationErrors) {
-			var errorMessage string
 			fieldName := err.Field()
 
 			switch (fieldName) {
 			case "Title":
-				errorMessage = "error message for Title"
+				errorMessages["titleError"] = "タイトルは1文字以上255文字以下で入力してください。"
 			case "Content":
-				errorMessage = "error message for Content"
+				errorMessages["contentError"] = "コンテンツは1文字以上65535文字以下で入力してください。"
 			default:
-				errorMessage = "error message"
+				errorMessages["unexpectedError"] = "unexpected error message"
 			}
-			errorMessages = append(errorMessages, errorMessage)
 		}
 	}
 

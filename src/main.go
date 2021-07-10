@@ -9,6 +9,7 @@ import (
 	"html/template"
 	"net/http"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -29,17 +30,33 @@ func ConnectMysql() *gorm.DB {
 	return db
 }
 
-func getIndexElement(a []dao.Article, e []string) interface{} {
+func replaceContent(content string) []string {
+	safeText := template.HTMLEscapeString(content)
+	return strings.Split(safeText,"\n")
+}
+
+func getIndexElement(a []dao.Article, e map[string]string) interface{} {
 	type Element struct {
 		Art []dao.Article
-		Err []string
+		Err map[string]string
 	}
-	m := Element{
+	m := &Element{
 		Art: a,
 		Err: e,
 	}
+	/*for i:=0;i<len(a);i++ {
+		safeText := template.HTMLEscapeString(m.Art[i].Content)
+		m.Art[i].Content = strings.Replace(safeText, "\n", "<br>", -1)
+	}
+	*/
 	return m
 }
+
+type editElement struct {
+	Id string
+	Err map[string]string
+}
+
 
 func getTemplate() *template.Template {
 	// 関数の定義とマッピング
@@ -49,6 +66,7 @@ func getTemplate() *template.Template {
 		AtStr := At.Format(layout)
 		return AtStr
 		},
+		"replace": replaceContent,
 	}
 	files := []string{"views/index.html","views/edit.html"}
 	tname := filepath.Base(files[0])
@@ -80,7 +98,7 @@ func main() {
 	//Output articles
 	e.GET("index", func(c echo.Context) error{
 		articles,_ := articleDB.GetArticles(db)
-		err := []string{}
+		err := map[string]string{"titleError":"", "contentError":""}
 		element := getIndexElement(articles,err)
 		return  c.Render(http.StatusOK, "index", element) // Redirect to home
 	})
@@ -99,14 +117,15 @@ func main() {
 	})
 
 	e.POST("/edit", func(c echo.Context) error {
-		return c.Render(http.StatusOK,"edit",c.FormValue("editId"))
+		return c.Render(http.StatusOK,"edit",editElement{Id: c.FormValue("editId")})
 	})
 
 	e.POST("/update", func(c echo.Context) error {
 		err := articleDB.EditArticle(db,c.FormValue("editId"),c.FormValue("title"),c.FormValue("contents"))
-		articles,_ := articleDB.GetArticles(db)
-		element := getIndexElement(articles,err)
-		return  c.Render(http.StatusOK, "index", element) // Redirect to home
+		if len(err) != 0 {
+			return c.Render(http.StatusOK,"edit",editElement{Id: c.FormValue("editId"),Err: err})
+		}
+		return c.Redirect(http.StatusFound,"/index")//Redirect to home
 	})
 
 	e.Logger.Fatal(e.Start(":8080"))

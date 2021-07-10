@@ -49,10 +49,10 @@ func (mr *MockArticleDBMockRecorder) DeleteArticle(db, id interface{}) *gomock.C
 }
 
 // EditArticle mocks base method.
-func (m *MockArticleDB) EditArticle(db *gorm.DB, id, title, content string) []string {
+func (m *MockArticleDB) EditArticle(db *gorm.DB, id, title, content string) map[string]string {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "EditArticle", db, id, title, content)
-	ret0, _ := ret[0].([]string)
+	ret0, _ := ret[0].(map[string]string)
 	return ret0
 }
 
@@ -78,10 +78,10 @@ func (mr *MockArticleDBMockRecorder) GetArticles(db interface{}) *gomock.Call {
 }
 
 // InsertArticle mocks base method.
-func (m *MockArticleDB) InsertArticle(db *gorm.DB, title, content string) []string {
+func (m *MockArticleDB) InsertArticle(db *gorm.DB, title, content string) map[string]string {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InsertArticle", db, title, content)
-	ret0, _ := ret[0].([]string)
+	ret0, _ := ret[0].(map[string]string)
 	return ret0
 }
 
