@@ -26,14 +26,20 @@ func TestArticleDao_InsertArticle(t *testing.T) {
 		name   string
 		args   args
 		prepareMockFn func(m *MockArticleDB)
-		want   []string
+		want   map[string]string
 	}{
 		// TODO: Add test cases.
 		{
 			name: "Title_Error",
 			args: args{db: getVirtualDB(Article{}),title: "", content: "イチゴ"},
 			prepareMockFn: func(m *MockArticleDB) {},
-			want: []string {"error message for Title"},
+			want: map[string]string {"titleError":"タイトルは1文字以上255文字以下で入力してください。"},
+		},
+		{
+			name: "success",
+			args: args{db: getVirtualDB(Article{}),title: "今日の朝食", content: "イチゴ"},
+			prepareMockFn: func(m *MockArticleDB) {},
+			want: map[string]string {},
 		},
 	}
 	for _, tt := range tests {
@@ -151,7 +157,7 @@ func TestArticleDao_EditArticle(t *testing.T) {
 		name   string
 		prepareMockFn func(m *MockArticleDB)
 		args   args
-		want   []string
+		want   map[string]string
 	}{
 		// TODO: Add test cases.
 		{
@@ -160,7 +166,7 @@ func TestArticleDao_EditArticle(t *testing.T) {
 				//m.EXPECT().EditArticle(getVirtualDB(),"1","フルスピード", "最高").Return([]string{})
 			},
 			args: args{db: getVirtualDB(Article{}),id: "1",title: "", contents: "バナナ"},
-			want: []string{"error message for Title"},
+			want: map[string]string{"titleError":"タイトルは1文字以上255文字以下で入力してください。"},
 		},
 	}
 	for _, tt := range tests {
