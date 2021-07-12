@@ -77,6 +77,20 @@ func (mr *MockArticleDBMockRecorder) GetArticles(db interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetArticles", reflect.TypeOf((*MockArticleDB)(nil).GetArticles), db)
 }
 
+// GetEditArticle mocks base method.
+func (m *MockArticleDB) GetEditArticle(db *gorm.DB, id string) Article {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetEditArticle", db, id)
+	ret0, _ := ret[0].(Article)
+	return ret0
+}
+
+// GetEditArticle indicates an expected call of GetEditArticle.
+func (mr *MockArticleDBMockRecorder) GetEditArticle(db, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEditArticle", reflect.TypeOf((*MockArticleDB)(nil).GetEditArticle), db, id)
+}
+
 // InsertArticle mocks base method.
 func (m *MockArticleDB) InsertArticle(db *gorm.DB, title, content string) map[string]string {
 	m.ctrl.T.Helper()

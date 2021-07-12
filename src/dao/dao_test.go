@@ -187,3 +187,43 @@ func TestArticleDao_EditArticle(t *testing.T) {
 		})
 	}
 }
+
+func TestArticleDao_getEditArticle(t *testing.T) {
+	type args struct {
+		db       *gorm.DB
+		id       string
+	}
+	tests := []struct {
+		name   string
+		prepareMockFn func(m *MockArticleDB)
+		args   args
+		want   Article
+	}{
+		// TODO: Add test cases.
+		{
+			name: "success",
+			prepareMockFn: func(m *MockArticleDB) {
+				//m.EXPECT().EditArticle(getVirtualDB(),"1","フルスピード", "最高").Return([]string{})
+			},
+			args: args{db: getVirtualDB(Article{}),id: "1"},
+			want: Article{},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			mock := NewMockArticleDB(ctrl)
+
+			tt.prepareMockFn(mock)
+
+			a := &ArticleDao{
+				articleDB: mock,
+			}
+			if got := a.GetEditArticle(tt.args.db, tt.args.id); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ArticleDao.EditArticle() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
