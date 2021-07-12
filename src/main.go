@@ -48,7 +48,7 @@ func getIndexElement(a []dao.Article, e map[string]string) interface{} {
 }
 
 type editElement struct {
-	Id string
+	EditArt dao.Article
 	Err map[string]string
 }
 
@@ -93,7 +93,7 @@ func main() {
 	//Output articles
 	e.GET("index", func(c echo.Context) error{
 		articles,_ := articleDB.GetArticles(db)
-		err := map[string]string{"titleError":"", "contentError":""}
+		err := map[string]string{}
 		element := getIndexElement(articles,err)
 		return  c.Render(http.StatusOK, "index", element) // Redirect to home
 	})
@@ -112,13 +112,15 @@ func main() {
 	})
 
 	e.POST("/edit", func(c echo.Context) error {
-		return c.Render(http.StatusOK,"edit",editElement{Id: c.FormValue("editId")})
+		editArticle := articleDB.GetEditArticle(db,c.FormValue("editId"))
+		return c.Render(http.StatusOK,"edit",editElement{EditArt: editArticle})
 	})
 
 	e.POST("/update", func(c echo.Context) error {
 		err := articleDB.EditArticle(db,c.FormValue("editId"),c.FormValue("title"),c.FormValue("contents"))
 		if len(err) != 0 {
-			return c.Render(http.StatusOK,"edit",editElement{Id: c.FormValue("editId"),Err: err})
+			editArticle := articleDB.GetEditArticle(db,c.FormValue("editId"))
+			return c.Render(http.StatusOK,"edit",editElement{EditArt: editArticle,Err: err})
 		}
 		return c.Redirect(http.StatusFound,"/index")//Redirect to home
 	})

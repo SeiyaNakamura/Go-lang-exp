@@ -20,6 +20,7 @@ type ArticleDB interface {
 	GetArticles(db *gorm.DB) ([]Article,[]error)
 	DeleteArticle(db *gorm.DB, id string) []error
 	EditArticle(db *gorm.DB, id string, title string, content string) map[string]string
+	GetEditArticle(db *gorm.DB,id string) Article
 }
 
 type ArticleDao struct {
@@ -80,4 +81,12 @@ func (a *ArticleDao) EditArticle(db *gorm.DB, id string, title string, contents 
 	}
 
 	return errors
+}
+
+func (a *ArticleDao) GetEditArticle(db *gorm.DB,id string) Article {
+	art := Article{}
+	editId ,_:= strconv.Atoi(id)
+	db.Where("id = ?",editId).Find(&art)
+
+	return art
 }
